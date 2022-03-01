@@ -1,0 +1,10 @@
+	[DebugServer 19:21:12] Successfully created new logger.
+	[DebugServer 19:21:12] Creating new Server socket 8675
+	[DebugServer 19:21:17] Got connection ... Attempting to link.
+	[DebugServer 19:21:17] SocketClient ready.
+	[DebugServer 19:21:26] Got connection ... Attempting to link.
+	[DebugServer 19:21:26] SocketClient ready.
+	[DebugServer 19:22:46] Got connection ... Attempting to link.
+	[DebugServer 19:22:46] SocketClient ready.
+	[DebugServer 19:22:50] Got connection ... Attempting to link.
+	[DebugServer 19:22:50] SocketClient ready.

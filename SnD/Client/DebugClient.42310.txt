@@ -1,0 +1,4 @@
+	[DebugClient 15:22:23] Successfully created new logger.
+	[DebugClient 15:22:23] Creating new Client socket 127.0.0.1:8675 ... Attempting connection
+	[DebugClient 15:22:24] Got connection ... Attempting to link.
+	[DebugClient 15:22:24] SocketClient ready.

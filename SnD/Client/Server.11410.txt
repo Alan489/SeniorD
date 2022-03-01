@@ -1,0 +1,6 @@
+	[Server 21:19:14] Successfully created new logger.
+***	[Server 21:19:14] IP to connect to? " 127.0.0.1 "
+***	[Server 21:19:18] Port to scan. Press enter to use default " 35 "
+	[Server 21:19:22] Creating new Client socket 127.0.0.1:35 ... Attempting connection
+	[Server 21:19:22] Got connection ... Attempting to link.
+	[Server 21:19:22] SocketClient ready.

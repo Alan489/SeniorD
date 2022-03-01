@@ -1,0 +1,4 @@
+
+public abstract class Event {
+	public abstract void Fire(String[] args);
+}

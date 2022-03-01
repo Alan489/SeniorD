@@ -1,0 +1,19 @@
+import java.util.Date;
+
+public class Debug {
+	
+	public static void main(String[] args)
+	{
+		globals.printCRInfo();
+		
+		logger l = new logger("DebugClient");
+		
+		globals.log = l;
+		
+		SocketClient sc = new SocketClient("127.0.0.1");
+		long start = new Date().getTime();
+		while(new Date().getTime()-start < 1000);
+		sc.writeData("Hello World`My name is moe");
+		
+	}
+}
