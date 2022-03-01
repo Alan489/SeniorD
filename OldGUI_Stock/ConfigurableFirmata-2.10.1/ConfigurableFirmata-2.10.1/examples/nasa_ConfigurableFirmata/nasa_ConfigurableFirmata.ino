@@ -1,0 +1,180 @@
+/*
+ * ConfigurableFirmata standard example file, for serial communication.
+ */
+
+#include <ConfigurableFirmata.h>
+
+// Use these defines to easily enable or disable certain modules
+
+#define ENABLE_ONE_WIRE
+#define ENABLE_ACCELSTEPPER
+#define ENABLE_SERIAL
+#define ENABLE_I2C
+#define ENABLE_ANALOG
+#define ENABLE_DIGITAL
+#define ENABLE_DHT
+#define ENABLE_FREQUENCY
+#ifdef ENABLE_DIGITAL
+#include <DigitalInputFirmata.h>
+DigitalInputFirmata digitalInput;
+
+#include <DigitalOutputFirmata.h>
+DigitalOutputFirmata digitalOutput;
+#endif
+
+#ifdef ENABLE_ANALOG
+#include <AnalogInputFirmata.h>
+AnalogInputFirmata analogInput;
+
+#include <AnalogOutputFirmata.h>
+AnalogOutputFirmata analogOutput;
+#include <AnalogWrite.h>
+#endif
+
+#ifdef ENABLE_I2C
+#include <Wire.h>
+#include <I2CFirmata.h>
+I2CFirmata i2c;
+#endif
+
+#ifdef ENABLE_ONE_WIRE
+#include <OneWireFirmata.h>
+OneWireFirmata oneWire;
+#endif
+
+#ifdef ENABLE_SERIAL
+#include <SerialFirmata.h>
+SerialFirmata serial;
+#endif
+
+#ifdef ENABLE_DHT
+#include <DhtFirmata.h>
+DhtFirmata dhtFirmata;
+#endif
+
+#include <FirmataExt.h>
+FirmataExt firmataExt;
+
+#include <FirmataReporting.h>
+FirmataReporting reporting;
+
+#ifdef ENABLE_ACCELSTEPPER
+#include <AccelStepperFirmata.h>
+AccelStepperFirmata accelStepper;
+#endif
+
+#ifdef ENABLE_FREQUENCY
+#include <Frequency.h>
+Frequency frequency;
+#endif
+
+void systemResetCallback()
+{
+  for (byte i = 0; i < TOTAL_PINS; i++) {
+    if (IS_PIN_ANALOG(i)) {
+      Firmata.setPinMode(i, PIN_MODE_ANALOG);
+    } else if (IS_PIN_DIGITAL(i)) {
+      Firmata.setPinMode(i, PIN_MODE_OUTPUT);
+    }
+  }
+  firmataExt.reset();
+}
+
+void initTransport()
+{
+  // Uncomment to save a couple of seconds by disabling the startup blink sequence.
+ Firmata.disableBlinkVersion();
+#ifdef ENABLE_WIFI
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  pinMode(VERSION_BLINK_PIN, OUTPUT);
+  bool pinIsOn = false;
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(100);
+    pinIsOn = !pinIsOn;
+    digitalWrite(VERSION_BLINK_PIN, pinIsOn);
+  }
+  Firmata.begin(serverStream);
+  Firmata.blinkVersion(); // Because the above doesn't do it.
+#else 
+  Firmata.begin(57600);
+#endif
+    
+}
+
+void initFirmata()
+{
+  // Set firmware name and version. The name is automatically derived from the name of this file.
+  // Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
+  // The usage of the above shortcut is not recommended, since it stores the full path of the file name in a 
+  // string constant, using both flash and ram. 
+  Firmata.setFirmwareNameAndVersion("ConfigurableFirmata", FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
+
+#ifdef ENABLE_DIGITAL
+  firmataExt.addFeature(digitalInput);
+  firmataExt.addFeature(digitalOutput);
+#endif
+	
+#ifdef ENABLE_ANALOG
+  firmataExt.addFeature(analogInput);
+  firmataExt.addFeature(analogOutput);
+#endif
+	
+	
+#ifdef ENABLE_I2C
+  firmataExt.addFeature(i2c);
+#endif
+	
+#ifdef ENABLE_ONE_WIRE
+  firmataExt.addFeature(oneWire);
+#endif
+	
+#ifdef ENABLE_SERIAL
+  firmataExt.addFeature(serial);
+#endif
+	
+#ifdef ENABLE_BASIC_SCHEDULER
+  firmataExt.addFeature(scheduler);
+#endif
+	
+  firmataExt.addFeature(reporting);
+#ifdef ENABLE_SPI
+  firmataExt.addFeature(spi);
+#endif
+#ifdef ENABLE_ACCELSTEPPER
+  firmataExt.addFeature(accelStepper);
+#endif
+	
+#ifdef ENABLE_DHT
+  firmataExt.addFeature(dhtFirmata);
+#endif
+
+#ifdef ENABLE_FREQUENCY
+  firmataExt.addFeature(frequency);
+#endif
+
+  Firmata.attach(SYSTEM_RESET, systemResetCallback);
+}
+
+void setup()
+{
+	initTransport();
+	Firmata.sendString(F("Booting device. Stand by..."));
+	initFirmata();
+
+	Firmata.parse(SYSTEM_RESET);
+}
+
+void loop()
+{
+  while(Firmata.available()) {
+    Firmata.processInput();
+    if (!Firmata.isParsingMessage()) {
+      break;
+    }
+  }
+
+  firmataExt.report(reporting.elapsed());
+
+}
